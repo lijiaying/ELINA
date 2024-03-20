@@ -41,7 +41,7 @@ endif
 
 ifneq ($(USE_GUROBI),)
 DFLAGS += -DGUROBI
-LIBS += -L$(GUROBI_HOME)/lib/ -lgurobi91
+LIBS += -L$(GUROBI_HOME)/lib/ -lgurobi110
 INCLUDES += -I$(GUROBI_HOME)/include
 endif
 
