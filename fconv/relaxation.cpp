@@ -293,7 +293,7 @@ vector<double*> relaxation_orthant(const int K,
         orthants[xi] = orthant;
     }
 
-    map<Quadrant , VInc_mpq> quadrant2vinc = get_quadrants_cdd_orthant(K, A, orthants);
+    map<Quadrant , VInc_mpq> quadrant2vinc = get_relu_quadrants_cdd_orthant(K, A, orthants);
 
     map<Quadrant, PDD> quadrant2pdd;
     for (auto& entry : quadrant2vinc) {
@@ -363,7 +363,7 @@ vector<double*> relaxation_orthant(const int K,
 vector<double*> krelu_with_cdd(const int K, const vector<double*>& A) {
     // No need to verify since CDD can work with input in any format.
     ASRTF(1 <= K && K <= 4, "K should be within allowed range.");
-    map<Quadrant, VInc_mpq> quadrant2vinc = get_quadrants_cdd(K, A);
+    map<Quadrant, VInc_mpq> quadrant2vinc = get_relu_quadrants_cdd(K, A);
 
     size_t num_vertices = 0;
     for (auto& entry : quadrant2vinc) {

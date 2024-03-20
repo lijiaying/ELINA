@@ -139,7 +139,7 @@ void run_split_in_quadrants_test(const int K, const string& path) {
     int micros_fast = t_fast.micros();
 
     Timer t_slow;
-    map<Quadrant, VInc_mpq> slow = get_quadrants_cdd(K, A);
+    map<Quadrant, VInc_mpq> slow = get_relu_quadrants_cdd(K, A);
     int micros_slow = t_slow.micros();
 
     print_acceleration_info(micros_fast, micros_slow);
@@ -258,7 +258,7 @@ void run_fkrelu_test(const int K, const string& path) {
     vector<mpq_t*> H_mpq = mpq_mat_from_MatDouble(H_ext);
 
     dd_set_global_constants();
-    map<Quadrant, VInc_mpq> quadrant2vinc = get_quadrants_cdd(K, A_int);
+    map<Quadrant, VInc_mpq> quadrant2vinc = get_relu_quadrants_cdd(K, A_int);
     dd_free_global_constants();
 
     // Now I will compute the final V. This will allow me to verify that produced constraints do not

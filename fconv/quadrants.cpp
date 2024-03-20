@@ -14,7 +14,7 @@ constexpr int DIGITS = numeric_limits<double>::digits10;
 
 using namespace std;
 
-map<Quadrant, VInc_mpq> get_quadrants_cdd(const int K, const vector<double*>& A) {
+map<Quadrant, VInc_mpq> get_relu_quadrants_cdd(const int K, const vector<double*>& A) {
     ASRTF(1 <= K && K <= 4, "K should be within allowed range.");
 
     const vector<Quadrant>& quadrants = K2QUADRANTS[K];
@@ -68,7 +68,7 @@ map<Quadrant, VInc_mpq> get_quadrants_cdd(const int K, const vector<double*>& A)
     return quadrant2vinc;
 }
 
-map<Quadrant, VInc_mpq> get_quadrants_cdd_orthant(const int K,
+map<Quadrant, VInc_mpq> get_relu_quadrants_cdd_orthant(const int K,
                                                   const vector<double*>& A,
                                                   const vector<double>& orthants) {
     ASRTF(1 <= K && K <= 4, "K should be within allowed range.");

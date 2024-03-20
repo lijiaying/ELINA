@@ -3,9 +3,9 @@
 #include <map>
 #include "utils.h"
 
-map<Quadrant, VInc_mpq> get_quadrants_cdd(int K, const vector<double*>& A);
+map<Quadrant, VInc_mpq> get_relu_quadrants_cdd(int K, const vector<double*>& A);
 
-map<Quadrant, VInc_mpq> get_quadrants_cdd_orthant(const int K, const vector<double*>& A,
+map<Quadrant, VInc_mpq> get_relu_quadrants_cdd_orthant(const int K, const vector<double*>& A,
                                                   const vector<double>& orthants);
 
 vector<DD_mpq> get_pool_quadrants_cdd(int K, const vector<double*>& A);
