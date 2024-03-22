@@ -19,7 +19,7 @@
 // for inputs that split zero.
 constexpr int K2NUM_TESTS[6] = {0, 4, 4, 6, 3, 4};
 
-const string activation2str[5] = {"Relu", "Pomol", "Tanh", "Sigm", "LeakyRelu"};
+const string activation2str[5] = {"Relu", "Pool", "Tanh", "Sigm", "LeakyRelu"};
 
 constexpr double TOLERANCE = 1.0E-10;
 
