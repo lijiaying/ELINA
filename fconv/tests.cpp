@@ -19,7 +19,7 @@
 // for inputs that split zero.
 constexpr int K2NUM_TESTS[6] = {0, 4, 4, 6, 3, 4};
 
-const string activation2str[4] = {"Relu", "Pool", "Tanh", "Sigm"};
+const string activation2str[5] = {"Relu", "Pomol", "Tanh", "Sigm", "LeakyRelu"};
 
 constexpr double TOLERANCE = 1.0E-10;
 
@@ -139,7 +139,7 @@ void run_split_in_quadrants_test(const int K, const string& path) {
     int micros_fast = t_fast.micros();
 
     Timer t_slow;
-    map<Quadrant, VInc_mpq> slow = get_relu_quadrants_cdd(K, A);
+    map<Quadrant, VInc_mpq> slow = get_quadrants_cdd(K, A);
     int micros_slow = t_slow.micros();
 
     print_acceleration_info(micros_fast, micros_slow);
@@ -258,7 +258,7 @@ void run_fkrelu_test(const int K, const string& path) {
     vector<mpq_t*> H_mpq = mpq_mat_from_MatDouble(H_ext);
 
     dd_set_global_constants();
-    map<Quadrant, VInc_mpq> quadrant2vinc = get_relu_quadrants_cdd(K, A_int);
+    map<Quadrant, VInc_mpq> quadrant2vinc = get_quadrants_cdd(K, A_int);
     dd_free_global_constants();
 
     // Now I will compute the final V. This will allow me to verify that produced constraints do not
@@ -417,6 +417,9 @@ void run_relaxation_cdd_test(const int K, const string& path, Activation activat
     switch (activation) {
         case Relu:
             H_ext = krelu_with_cdd(A_ext);
+            break;
+        case LeakyRelu:
+            H_ext = kleakyrelu_with_cdd(A_ext, 0.01);
             break;
         case Pool:
             H_ext = kpool_with_cdd(A_ext);
@@ -643,6 +646,7 @@ int main() {
     run_all_relaxation_cdd_tests(Pool, 3); // k=4 1-2 minutes
     run_all_relaxation_cdd_tests(Tanh, 2); // k=3 1-2 minutes
     run_all_relaxation_cdd_tests(Sigm, 2); // k=3 1-2 minutes
+    run_all_relaxation_cdd_tests(LeakyRelu, 3); // k=4 1-2 minutes
     run_1relu_test();
     run_all_sparse_cover_tests();
 

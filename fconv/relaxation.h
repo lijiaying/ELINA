@@ -11,6 +11,8 @@ vector<double*> fast_relaxation_through_decomposition(int K,
 
 vector<double*> krelu_with_cdd(int K, const vector<double*>& A);
 
+vector<double*> kleakyrelu_with_cdd(int K, const vector<double*>& A, double alpha);
+
 vector<double*> fkpool(int K, const vector<double*>& A);
 
 vector<double*> kpool_with_cdd(int K, const vector<double*>& A);

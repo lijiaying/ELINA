@@ -293,7 +293,7 @@ vector<double*> relaxation_orthant(const int K,
         orthants[xi] = orthant;
     }
 
-    map<Quadrant , VInc_mpq> quadrant2vinc = get_relu_quadrants_cdd_orthant(K, A, orthants);
+    map<Quadrant , VInc_mpq> quadrant2vinc = get_quadrants_cdd_orthant(K, A, orthants);
 
     map<Quadrant, PDD> quadrant2pdd;
     for (auto& entry : quadrant2vinc) {
@@ -363,7 +363,7 @@ vector<double*> relaxation_orthant(const int K,
 vector<double*> krelu_with_cdd(const int K, const vector<double*>& A) {
     // No need to verify since CDD can work with input in any format.
     ASRTF(1 <= K && K <= 4, "K should be within allowed range.");
-    map<Quadrant, VInc_mpq> quadrant2vinc = get_relu_quadrants_cdd(K, A);
+    map<Quadrant, VInc_mpq> quadrant2vinc = get_quadrants_cdd(K, A);
 
     size_t num_vertices = 0;
     for (auto& entry : quadrant2vinc) {
@@ -394,6 +394,55 @@ vector<double*> krelu_with_cdd(const int K, const vector<double*>& A) {
         set_arr_free(entry.second.V_to_H_incidence);
     }
     assert(counter == num_vertices && "Counter should equal the number of vertices.");
+
+    vector<double*> H = cdd_compute_inequalities_from_vertices(vertices);
+    dd_FreeMatrix(vertices);
+
+    return H;
+}
+
+vector<double*> kleakyrelu_with_cdd(const int K, const vector<double*>& A, double alpha) {
+    // No need to verify since CDD can work with input in any format.
+    ASRTF(1 <= K && K <= 4, "K should be within allowed range.");
+    ASRTF(alpha > 0 && alpha < 1.0, "Alpha should be a small positive.");
+    mpq_t alpha_mpq;
+    mpq_init(alpha_mpq);
+    mpq_set_d(alpha_mpq, alpha);
+    map<Quadrant, VInc_mpq> quadrant2vinc = get_quadrants_cdd(K, A);
+
+    size_t num_vertices = 0;
+    for (auto& entry : quadrant2vinc) {
+        num_vertices += entry.second.V.size();
+    }
+
+    dd_MatrixPtr vertices = dd_CreateMatrix(num_vertices, 2 * K + 1);
+    size_t counter = 0;
+
+    for (auto& entry : quadrant2vinc) {
+        const auto& quadrant = entry.first;
+        auto& V_quadrant = entry.second.V;
+
+        for (const auto& v : V_quadrant) {
+            mpq_t* v_projection = vertices->matrix[counter];
+            counter++;
+            mpq_arr_set(K + 1, v_projection, v);
+            for (int i = 0; i < K; i++) {
+                if (quadrant[i] == PLUS) {
+                    // Only need to set for the case of PLUS,
+                    // because in case of MINUS there should be 0.
+                    // And it is already there automatically.
+                    mpq_set(v_projection[1 + i + K], v[1 + i]);
+                }
+                else if (quadrant[i] == MINUS) {
+                    mpq_mul(v_projection[1 + i + K], v[1 + i], alpha_mpq);
+                }
+            }
+        }
+        mpq_mat_free(K + 1, V_quadrant);
+        set_arr_free(entry.second.V_to_H_incidence);
+    }
+    assert(counter == num_vertices && "Counter should equal the number of vertices.");
+    mpq_clear(alpha_mpq);
 
     vector<double*> H = cdd_compute_inequalities_from_vertices(vertices);
     dd_FreeMatrix(vertices);

@@ -29,6 +29,7 @@ from time import time
 
 activation2fast = {
     "relu": fkrelu,
+    "leakyrelu": fkleakyrelu_fake,
     "pool": fkpool,
     "tanh": fktanh,
     "sigm": fksigm
@@ -36,6 +37,7 @@ activation2fast = {
 
 activation2cdd = {
     "relu": krelu_with_cdd,
+    "leakyrelu": kleakyrelu_with_cdd,
     "pool": kpool_with_cdd,
     "tanh": ktanh_with_cdd,
     "sigm": ksigm_with_cdd

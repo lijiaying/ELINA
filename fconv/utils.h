@@ -37,7 +37,8 @@ enum Activation {
     Relu = 0,
     Pool = 1,
     Tanh = 2,
-    Sigm = 3
+    Sigm = 3,
+    LeakyRelu = 4
 };
 
 struct DD_mpq {

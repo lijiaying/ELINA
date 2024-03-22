@@ -31,7 +31,8 @@ enum Version {
 
 MatDouble compute_relaxation(MatDouble input_hrep,
                              Activation activation,
-                             Version version) {
+                             Version version,
+                             double alpha = 0.0) {
     // Activation and Version are enum
     dd_set_global_constants();
     const int K = input_hrep.cols - 1;
@@ -56,6 +57,10 @@ MatDouble compute_relaxation(MatDouble input_hrep,
         H = fast_relaxation_through_decomposition(K, A, activation);
     } else if (activation == Sigm && version == CDD) {
         H = ktasi_with_cdd(K, A, activation);
+    } else if (activation == LeakyRelu && version == Fast) {
+        throw runtime_error("Unknown activation function and version.");
+    } else if (activation == LeakyRelu && version == CDD) {
+        H = kleakyrelu_with_cdd(K, A, alpha);
     }
     else {
         throw runtime_error("Unknown activation function and version.");
@@ -77,6 +82,14 @@ MatDouble fkrelu(MatDouble input_hrep) {
 
 MatDouble krelu_with_cdd(MatDouble input_hrep) {
     return compute_relaxation(input_hrep, Relu, CDD);
+}
+
+MatDouble fkleakyrelu_fake(MatDouble input_hrep) {
+    return compute_relaxation(input_hrep, Relu, Fast);
+}
+
+MatDouble kleakyrelu_with_cdd(MatDouble input_hrep, double alpha) {
+    return compute_relaxation(input_hrep, LeakyRelu, CDD, alpha);
 }
 
 MatDouble fkpool(MatDouble input_hrep) {

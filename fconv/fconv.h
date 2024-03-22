@@ -30,6 +30,9 @@ MatDouble fkrelu(MatDouble input_hrep);
 
 MatDouble krelu_with_cdd(MatDouble input_hrep);
 
+// MatDouble fkleakyrelu_fake(MatDouble input_hrep);
+MatDouble kleakyrelu_with_cdd(MatDouble input_hrep, double alpha);
+
 MatDouble fkpool(MatDouble input_hrep);
 
 MatDouble kpool_with_cdd(MatDouble input_hrep);

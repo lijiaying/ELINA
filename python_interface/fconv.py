@@ -64,6 +64,8 @@ free_MatInt_c.restype = None
 
 fkrelu_c = fconv_api.fkrelu
 krelu_with_cdd_c = fconv_api.krelu_with_cdd
+# fkleakyrelu_fake_c = fconv_api.fkleakyrelu_fake # fake
+kleakyrelu_with_cdd_c = fconv_api.kleakyrelu_with_cdd
 fkpool_c = fconv_api.fkpool
 kpool_with_cdd_c = fconv_api.kpool_with_cdd
 fktanh_c = fconv_api.fktanh
@@ -74,6 +76,8 @@ ksigm_with_cdd_c = fconv_api.ksigm_with_cdd
 ftanh_orthant_c = fconv_api.ftanh_orthant
 fsigm_orthant_c = fconv_api.fsigm_orthant
 
+if relaxation_c == kleakyrelu_with_cdd_c:
+    relaxation_c.argtype = [MatDouble_c, c_double]
 
 for relaxation_c in [fkrelu_c, krelu_with_cdd_c,
                      fkpool_c, kpool_with_cdd_c,
@@ -88,7 +92,7 @@ generate_sparse_cover_c.argtype = [c_int, c_int]
 generate_sparse_cover_c.restype = MatInt_c
 
 
-def _compute_relaxation(inp_hrep: np.ndarray, activation: str, version: str) -> np.ndarray:
+def _compute_relaxation(inp_hrep: np.ndarray, activation: str, version: str, alpha: double=0.0) -> np.ndarray:
     """
     Input in format b + Ax >= 0. The input has to be octahedron in a certain format.
     An example of possible inp is:
@@ -102,7 +106,7 @@ def _compute_relaxation(inp_hrep: np.ndarray, activation: str, version: str) -> 
         x2  <= 0.25
         -x2 <= 0.75
     """
-    assert activation in ["relu", "pool", "tanh", "sigm"]
+    assert activation in ["relu", "pool", "tanh", "sigm", "leakyrelu"]
     assert version in ["fast", "cdd", "orthant"]
 
     rows, cols = inp_hrep.shape
@@ -121,6 +125,11 @@ def _compute_relaxation(inp_hrep: np.ndarray, activation: str, version: str) -> 
         out_hrep = fkrelu_c(inp_hrep)
     elif activation == "relu" and version == "cdd":
         out_hrep = krelu_with_cdd_c(inp_hrep)
+    # elif activation == "leakyrelu" and version == "fast":
+    #     out_hrep = fkleakyrelu_fake_c(inp_hrep) # this is fake....
+    elif activation == "leakyrelu" and version == "cdd":
+        alpha_c = c_double(alpha)
+        out_hrep = kleakyrelu_with_cdd_c(inp_hrep, alpha_c)
     elif activation == "pool" and version == "fast":
         out_hrep = fkpool_c(inp_hrep)
     elif activation == "pool" and version == "cdd":
@@ -162,6 +171,14 @@ def fkrelu(inp_hrep: np.ndarray) -> np.ndarray:
 
 def krelu_with_cdd(inp_hrep: np.ndarray) -> np.ndarray:
     return _compute_relaxation(inp_hrep, "relu", "cdd")
+
+
+# def fkleakyrelu_fake(inp_hrep: np.ndarray) -> np.ndarray:
+#     return _compute_relaxation(inp_hrep, "leakyrelu", "cdd")
+
+
+def kleakyrelu_with_cdd(inp_hrep: np.ndarray, alpha: double) -> np.ndarray:
+    return _compute_relaxation(inp_hrep, "leakyrelu", "cdd", alpha)
 
 
 def fkpool(inp_hrep: np.ndarray) -> np.ndarray:
