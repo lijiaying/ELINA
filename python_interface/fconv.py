@@ -76,8 +76,8 @@ ksigm_with_cdd_c = fconv_api.ksigm_with_cdd
 ftanh_orthant_c = fconv_api.ftanh_orthant
 fsigm_orthant_c = fconv_api.fsigm_orthant
 
-if relaxation_c == kleakyrelu_with_cdd_c:
-    relaxation_c.argtype = [MatDouble_c, c_double]
+kleakyrelu_with_cdd_c.argtype = [MatDouble_c, c_double]
+kleakyrelu_with_cdd_c.restype = MatDouble_c
 
 for relaxation_c in [fkrelu_c, krelu_with_cdd_c,
                      fkpool_c, kpool_with_cdd_c,
@@ -92,7 +92,7 @@ generate_sparse_cover_c.argtype = [c_int, c_int]
 generate_sparse_cover_c.restype = MatInt_c
 
 
-def _compute_relaxation(inp_hrep: np.ndarray, activation: str, version: str, alpha: double=0.0) -> np.ndarray:
+def _compute_relaxation(inp_hrep: np.ndarray, activation: str, version: str, alpha: c_double=0.0) -> np.ndarray:
     """
     Input in format b + Ax >= 0. The input has to be octahedron in a certain format.
     An example of possible inp is:
@@ -177,7 +177,7 @@ def krelu_with_cdd(inp_hrep: np.ndarray) -> np.ndarray:
 #     return _compute_relaxation(inp_hrep, "leakyrelu", "cdd")
 
 
-def kleakyrelu_with_cdd(inp_hrep: np.ndarray, alpha: double) -> np.ndarray:
+def kleakyrelu_with_cdd(inp_hrep: np.ndarray, alpha: c_double) -> np.ndarray:
     return _compute_relaxation(inp_hrep, "leakyrelu", "cdd", alpha)
 
 
