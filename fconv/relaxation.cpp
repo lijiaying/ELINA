@@ -404,7 +404,7 @@ vector<double*> krelu_with_cdd(const int K, const vector<double*>& A) {
 vector<double*> kleakyrelu_with_cdd(const int K, const vector<double*>& A, double alpha) {
     // No need to verify since CDD can work with input in any format.
     ASRTF(1 <= K && K <= 4, "K should be within allowed range.");
-    ASRTF(alpha > 0 && alpha < 1.0, "Alpha should be a small positive.");
+    ASRTF(alpha >= 0 && alpha <= 1.0, "Alpha should be a small positive.");
     mpq_t alpha_mpq;
     mpq_init(alpha_mpq);
     mpq_set_d(alpha_mpq, alpha);
