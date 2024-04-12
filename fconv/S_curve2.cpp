@@ -355,23 +355,6 @@ void compute_S_curve_bounds(double x_lb, double x_ub, bool is_sigm,
         }
     }
 
-
-//    }
-//        {
-//        if (x_lb <= -limit) {
-//            *k_lb = 0;
-//            *b_lb = is_sigm ? sigm(x_lb) : tanh(x_lb);
-//        } else {
-//            get_optimal_curve_bound(k_lb, b_lb, x_lb, x_ub, false, is_sigm);
-//        }
-//        if (x_ub >= limit) {
-//            *k_ub = 0;
-//            *b_ub = is_sigm ? sigm(x_ub) : tanh(x_ub);
-//        } else {
-//            get_optimal_curve_bound(k_ub, b_ub, x_lb, x_ub, true, is_sigm);
-//        }
-//    }
-
     // Adjusting for numerical soundness (with big safe margin).
     *b_lb -= SMALL;
     *b_ub += SMALL;

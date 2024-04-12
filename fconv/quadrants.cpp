@@ -34,9 +34,9 @@ map<Quadrant, VInc_mpq> get_quadrants_cdd(const int K, const vector<double*>& A)
             mpq_t* row = cdd_A->matrix[NUM_H + xi];
             mpq_arr_set_zero(K + 1, row);
             if (quadrant[xi] == MINUS) {
-                mpq_set_si(row[xi + 1], -1, 1);
+                mpq_set_si(row[xi + 1], -1, 1); // xi <= 0
             } else {
-                mpq_set_si(row[xi + 1], 1, 1);
+                mpq_set_si(row[xi + 1], 1, 1); // xi >= 0
             }
         }
         dd_PolyhedraPtr poly = cdd_Matrix_to_Poly(cdd_A);
